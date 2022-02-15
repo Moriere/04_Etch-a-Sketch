@@ -1,0 +1,25 @@
+body {
+    display: flex;
+    justify-content: center;
+}
+
+#buttonBar {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Canvas */
+
+#canvasContainer {
+    display: flex;
+    height: 688px;
+    width: 688px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0px;
+    border: 2px black solid;
+}
+
+#canvasContainer div {
+    box-shadow: inset 1px 1px rgb(240, 240, 240);
+}
