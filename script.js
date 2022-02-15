@@ -1,63 +1,50 @@
-const body = document.querySelector('body');
-const cavnasContainer = document.createElement('div');
-cavnasContainer.setAttribute('id', 'canvasContainer');
-body.appendChild(cavnasContainer);
+// CANVAS
 
-let color = "black";
+const canvasContainer = document.getElementById('canvasContainer');
+let canvasSize = 3;
+let color = "rgb(0, 0, 0)";
 
-//BUTTON BAR
-
-const buttonBar = document.createElement('div');
-buttonBar.setAttribute('id','buttonBar');
-body.insertBefore(buttonBar, cavnasContainer);
-
-const colorBtnBlack = document.createElement('button');
-colorBtnBlack.setAttribute('id', 'setBlack');
-colorBtnBlack.textContent = "Set brush color to Black";
-buttonBar.appendChild(colorBtnBlack);
-
-const colorBtnRGB = document.createElement('button');
-colorBtnRGB.setAttribute('id', 'setRGB');
-colorBtnRGB.textContent = "Set brush color to random";
-buttonBar.appendChild(colorBtnRGB);
-
-const resetBtn = document.createElement('button');
-resetBtn.setAttribute('id', 'resetBTN');
-resetBtn.textContent = "clear screen";
-buttonBar.appendChild(resetBtn);
-
-const sliderContainer = document.createElement('div');
-sliderContainer.setAttribute('id', 'sliderContainer');
-buttonBar.appendChild(sliderContainer);
-const slider = document.createElement('input');
-slider.setAttribute('type', 'range');
-slider.setAttribute('min', '2');
-slider.setAttribute('max', '100');
-slider.setAttribute('value', '16');
-slider.setAttribute('id', 'slider');
-sliderContainer.appendChild(slider);
-
-//CANVAS
-
-let canvasSize = 16;
-
-const canvasPixels = [];
 for (let i = 0; i < canvasSize ** 2; i++) {
-    canvasPixels[i] = document.createElement('div');
-    cavnasContainer.appendChild(canvasPixels[i]);
-    canvasPixels[i].style.cssText = `flex: 1 1 ${100/canvasSize}%`;
+    const canvasPixel = document.createElement('div');
+    canvasContainer.appendChild(canvasPixel);
+    canvasPixel.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: rgb(250, 250, 250);`;
 }
 
 // EVENT LISTENERS
 
-//slider.addEventListener()
-resetBtn.addEventListener('click', resetCanvas);
-colorBtnBlack.addEventListener('click', () => color = "black");
-colorBtnRGB.addEventListener('click', () => color = "random");
-canvasPixels.map(pixel => pixel.addEventListener('mouseover', colorPixel));
+const buttons = document.querySelectorAll('button');
+buttons.forEach(btn => btn.addEventListener('click', clickedButton));
+const slider = document.getElementById('slider');
+slider.addEventListener('input', redrawCanvas);
+let canvasPixels = document.querySelectorAll('#canvasContainer div');
+canvasPixels.forEach(pixel => pixel.addEventListener('mouseover', colorPixel));
+
+function redrawCanvas() {
+    this.addEventListener('mouseup', (slider) => {
+        canvasSize = slider.target.valueAsNumber;
+        resetCanvas();
+
+        if (canvasPixels.length < canvasSize ** 2) {
+            for (let i = canvasPixels.length; i < canvasSize ** 2; i++) {
+                const canvasPixel = document.createElement('div');
+                canvasContainer.appendChild(canvasPixel);
+                canvasPixels = document.querySelectorAll('#canvasContainer div');
+            }
+            canvasPixels.forEach(pixel => pixel.addEventListener('mouseover', colorPixel));
+        }
+        if (canvasPixels.length >= canvasSize ** 2) {
+            for (let i = canvasPixels.length; i > canvasSize ** 2; i--) {
+                canvasContainer.removeChild(canvasContainer.lastElementChild);
+                canvasPixels = document.querySelectorAll('#canvasContainer div');
+            }
+        }
+            
+        canvasPixels.forEach(pixel => pixel.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: rgb(250, 250, 250);`);
+    });
+}
 
 function resetCanvas () {
-    canvasPixels.map(pixel => pixel.style.cssText = `flex: 1 1 ${100/canvasSize}%`);
+    canvasPixels.forEach(pixel => pixel.style.cssText = `flex: 1 1 ${100/canvasSize}%`);
 }
 
 function randomRGB() {
@@ -68,9 +55,37 @@ function randomRGB() {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-function colorPixel(pixel) {
-    if (color === "black") pixel.target.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: rgb(0,0,0);`;
-    if (color === "random") pixel.target.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: ${randomRGB()};`;
+function darken(pixel) {
+    let currentColor = pixel.target.style.background.slice(4, -1).split(", ");
+    
+    if (currentColor[0] === '250' && currentColor[1] === '250' && currentColor[2] === '250') {
+        for (let i = 0; i < 3; i++) currentColor[i] = +currentColor[i];
+    }
+    for (let i = 0; i < 3; i++) currentColor[i] = currentColor[i]-25;
+    return `rgb(${currentColor[0]}, ${currentColor[1]}, ${currentColor[2]})`;
 }
 
-// ------------------------ INITIALIZE BASIC HTML INSTEAD OF DOING EVERYTHING HERE -------------------
+function colorPixel(pixel) {
+    if (color === "rgb(0, 0, 0)") pixel.target.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: rgb(0, 0, 0);`;
+    if (color === "random") pixel.target.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: ${randomRGB()};`;
+    if (color === "shader") pixel.target.style.cssText = `flex: 1 1 ${100/canvasSize}%; background: ${darken(pixel)};`;
+}
+
+function clickedButton(clickedBtn) {
+    switch (clickedBtn.target.id) {
+        case ("setBlack"):
+            color = "rgb(0, 0, 0)";
+            break;
+        case ("setRGB"):
+            color = "random"
+            break;
+        case ("setShader"):
+            color = "shader";
+            break;
+        case ("eraser"):
+            break;
+        case ("resetBTN"):
+            resetCanvas();
+            break;
+    }
+}

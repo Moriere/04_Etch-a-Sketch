@@ -22,4 +22,5 @@ body {
 
 #canvasContainer div {
     box-shadow: inset 1px 1px rgb(240, 240, 240);
+    cursor: crosshair;
 }
