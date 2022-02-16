@@ -2,11 +2,12 @@
 
 const canvasContainer = document.getElementById('canvasContainer');
 let canvasSize = 3;
-let brushColor = "rgb(0, 0, 0)";
+let brushColor = "black";
 
 for (let i = 0; i < canvasSize ** 2; i++) {
     const canvasPixel = document.createElement('div');
     canvasContainer.appendChild(canvasPixel);
+    canvasPixel.classList.add('grid');
     canvasPixel.style.cssText = `flex: 1 1 ${100/canvasSize}%; background-color: rgb(255, 255, 255);`;
 }
 
@@ -16,12 +17,15 @@ const buttons = document.querySelectorAll('button');
 buttons.forEach(btn => btn.addEventListener('click', clickedButton));
 const slider = document.getElementById('slider');
 slider.addEventListener('input', redrawCanvas);
+const rangeNumber = document.getElementById('rangeNumber');
+rangeNumber.textContent = `${slider.valueAsNumber} x ${slider.valueAsNumber}`;
 let canvasPixels = document.querySelectorAll('#canvasContainer div');
 canvasPixels.forEach(pixel => pixel.addEventListener('mouseover', colorPixel));
 
 function redrawCanvas() {
     this.addEventListener('mouseup', (slider) => {
         canvasSize = slider.target.valueAsNumber;
+        rangeNumber.textContent = `${slider.target.valueAsNumber} x ${slider.target.valueAsNumber}`;
         resetCanvas();
 
         if (canvasPixels.length < canvasSize ** 2) {
@@ -31,6 +35,7 @@ function redrawCanvas() {
                 canvasPixels = document.querySelectorAll('#canvasContainer div');
             }
             canvasPixels.forEach(pixel => pixel.addEventListener('mouseover', colorPixel));
+            canvasPixels.forEach(pixel => pixel.classList.add('grid'));
         }
         if (canvasPixels.length >= canvasSize ** 2) {
             for (let i = canvasPixels.length; i > canvasSize ** 2; i--) {
@@ -72,6 +77,10 @@ function colorPixel(pixel) {
     if (brushColor === "erase") pixel.target.style.cssText = `flex: 1 1 ${100/canvasSize}%; background-color: rgb(255, 255, 255);`;
 }
 
+function toggleGrid() {
+    canvasPixels.forEach(pixel => pixel.classList.toggle('grid'));
+}
+
 function clickedButton(clickedBtn) {
     switch (clickedBtn.target.id) {
         case ("setBlack"):
@@ -88,6 +97,9 @@ function clickedButton(clickedBtn) {
             break;
         case ("resetBTN"):
             resetCanvas();
+            break;
+        case ("toggleGrid"):
+            toggleGrid();
             break;
     }
 }
