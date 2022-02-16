@@ -7,17 +7,24 @@
     <title>Etch a Sketch</title>
     <link rel="stylesheet" href="./style.css">
     <script src="./script.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"> 
 </head>
 <body>
     <div id="buttonBar">
-        <button id="setBlack">Black</button>
+        <div id="title">Brushes</div>
+        <button id="setBlack" autofocus>Black</button>
         <button id="setRGB">Rainbow</button>
         <button id="setShader">Shader</button>
         <button id="eraser">Eraser</button>
-        <button id="resetBTN">Clear canvas</button>
+        <div id="title">Canvas</div>
         <div id="sliderContainer">
             <input type="range" min="2" max="70" value="4" id="slider">
+            <div id="rangeNumber"></div>
         </div>
+        <button id="toggleGrid">Toggle grid</button>
+        <button id="resetBTN">Clear</button>
     </div>
     <div id="canvasContainer"></div>
 </body>
