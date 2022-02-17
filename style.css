@@ -70,6 +70,7 @@ button:hover {
     flex-wrap: wrap;
     justify-content: center;
     margin: 0px;
+    cursor: crosshair;
 }
 
 #canvasContainer div.grid {
